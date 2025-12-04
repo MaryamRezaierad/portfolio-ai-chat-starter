@@ -111,10 +111,10 @@ export function AIChat({ endpoint = '/api/chat' }: AIChatProps) {
             <div className="bg-black text-white px-5 py-4 flex items-start justify-between gap-4">
               <div>
                 <h3 className="font-semibold text-sm">
-                  Ask my portfolio anything
+                  Get details on Maryam's work
                 </h3>
                 <p className="text-xs text-neutral-300">
-                  Projects, process, tools, background.
+                  Powered by AI
                 </p>
               </div>
               <button
