@@ -58,7 +58,7 @@ export function AIChat({ endpoint = '/api/chat' }: AIChatProps) {
         ...newMessages,
         {
           role: 'assistant',
-          content: data.response ?? 'No response received.',
+          content: data.message ?? 'No response received.',
         },
       ]);
     } catch (err) {
