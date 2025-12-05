@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import Groq from "groq-sdk";
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -128,3 +126,4 @@ export async function GET() {
     { status: 200 }
   );
 }
+
