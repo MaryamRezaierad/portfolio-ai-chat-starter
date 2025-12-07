@@ -18,7 +18,16 @@ export function AIChat({ endpoint = '/api/chat' }: AIChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hideButton, setHideButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Check URL parameter to hide button
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('hideButton') === 'true') {
+      setHideButton(true);
+    }
+  }, []);
 
   // Auto-scroll when new messages arrive
   useEffect(() => {
@@ -85,17 +94,19 @@ export function AIChat({ endpoint = '/api/chat' }: AIChatProps) {
 
   return (
     <>
-      {/* Floating button */}
-      <motion.button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-black text-white shadow-lg flex items-center justify-center z-50 focus:outline-none focus:ring-2 focus:ring-white/60"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Open portfolio chat"
-      >
-        <MessageCircle className="h-6 w-6" />
-      </motion.button>
+      {/* Floating button - only show if hideButton is false */}
+      {!hideButton && (
+        <motion.button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#2D466D] text-white shadow-lg flex items-center justify-center z-50 focus:outline-none focus:ring-2 focus:ring-white/60"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Toggle chat"
+        >
+          {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        </motion.button>
+      )}
 
       {/* Chat window */}
       <AnimatePresence>
@@ -108,42 +119,15 @@ export function AIChat({ endpoint = '/api/chat' }: AIChatProps) {
             className="fixed bottom-6 right-6 w-96 max-w-[95vw] h-[520px] bg-white rounded-3xl shadow-2xl z-50 flex flex-col overflow-hidden border border-neutral-200"
           >
             {/* Header */}
-            <div className="bg-black text-white px-5 py-4 flex items-start justify-between gap-4">
-              <div>
-                <h3 className="font-semibold text-sm">
-                  Get details on Maryam's work
-                </h3>
-                <p className="text-xs text-neutral-300">
-                  Powered by AI
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="hover:opacity-70 transition-opacity"
-                aria-label="Close chat"
-              >
-                <X className="h-4 w-4" />
-              </button>
+            <div className="bg-[#2D466D] text-white px-5 py-4">
+              <h3 className="font-semibold text-sm">Get details on Maryam's work</h3>
+              <p className="text-xs text-neutral-300">
+                Powered by AI
+              </p>
             </div>
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-neutral-50/60">
-              {messages.length === 0 && (
-                <div className="text-center text-neutral-500 text-xs mt-6 px-3">
-                  <p>
-                    Try things like:{' '}
-                    <span className="font-medium">
-                      “How do you run usability tests?”
-                    </span>{' '}
-                    or{' '}
-                    <span className="font-medium">
-                      “Tell me about your favourite case study.”
-                    </span>
-                  </p>
-                </div>
-              )}
-
               {messages.map((msg, i) => (
                 <div
                   key={i}
@@ -154,7 +138,7 @@ export function AIChat({ endpoint = '/api/chat' }: AIChatProps) {
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-2 text-xs leading-relaxed ${
                       msg.role === 'user'
-                        ? 'bg-black text-white'
+                        ? 'bg-[#2D466D] text-white'
                         : 'bg-white text-black border border-neutral-200'
                     }`}
                   >
@@ -182,28 +166,21 @@ export function AIChat({ endpoint = '/api/chat' }: AIChatProps) {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask a question about the work…"
-                  className="flex-1 rounded-full border border-neutral-200 px-4 py-2 text-xs focus:outline-none focus:border-black"
+                  placeholder="Ask a question…"
+                  className="flex-1 rounded-full border border-neutral-200 px-4 py-2 text-xs focus:outline-none focus:border-[#2D466D]"
                   disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={sendMessage}
                   disabled={!input.trim() || isLoading}
-                  className="h-9 w-9 rounded-full bg-black text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="h-9 w-9 rounded-full bg-[#2D466D] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
                   aria-label="Send message"
                 >
                   <Send className="h-4 w-4" />
                 </button>
               </div>
             </div>
-
-            {/* Optional easter-egg note – commented out so people can keep or delete */}
-            {/*
-              // If this starter helped you land interviews or make your portfolio clearer,
-              // consider tossing a little love back into the universe:
-              // endorse another designer, share the guide, or leave a star on the repo. 💫
-            */}
           </motion.div>
         )}
       </AnimatePresence>
